@@ -1,0 +1,134 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ <modelVersion>4.0.0</modelVersion>
+ <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.3.3.RELEASE</version>
+ </parent>
+
+ <groupId>com.lianggzone</groupId>
+ <artifactId>netty-websocket-demo</artifactId>
+ <version>0.1</version>
+ <packaging>jar</packaging>
+
+ <properties>
+ 	<jdk.version>1.7</jdk.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+ </properties>
+ 
+ <developers>
+     <developer>
+         <id>lianggzone</id>
+         <name>梁桂钊</name>
+         <email>lianggzone@163.com</email>
+         <roles>
+             <role>Architect</role>
+             <role>Developer</role>
+         </roles>
+     </developer>
+ </developers>
+ 
+ <dependencies>
+ 	<!-- netty -->
+    <!-- <dependency>
+		<groupId>io.netty</groupId>
+		<artifactId>netty-all</artifactId>
+		<version>5.0.0.Alpha2</version>
+    </dependency> -->
+    <dependency>
+	    <groupId>io.netty</groupId>
+	    <artifactId>netty-all</artifactId>
+	    <version>4.1.3.Final</version>
+	</dependency>
+    <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>3.0.0-beta-2</version>
+    </dependency>
+    
+	<!-- spring -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+ </dependencies>
+ 
+  <build>
+    <plugins>
+    	<plugin>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-maven-plugin</artifactId>
+	    </plugin>
+      	<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<configuration>
+				<defaultLibBundleDir>lib</defaultLibBundleDir>
+				<source>1.7</source>
+				<target>1.7</target>
+				<encoding>UTF-8</encoding>
+			</configuration>
+		</plugin>
+		<plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <configuration>
+                <encoding>UTF-8</encoding>
+                <useDefaultDelimiters>false</useDefaultDelimiters>
+                <escapeString>\</escapeString>
+                <delimiters>
+                    <delimiter>${*}</delimiter>
+                </delimiters>
+            </configuration>
+        </plugin>
+    </plugins>
+    <filters>
+		<filter>src/main/filters/filter-${env}.properties</filter>
+	</filters>
+	<resources>
+		<resource>
+			<directory>src/main/filters/resources/${env}</directory>
+		</resource>
+		<resource>
+			<directory>src/main/resources</directory>
+			<filtering>true</filtering>
+		</resource>
+	</resources>
+  </build>
+  <profiles>
+		<profile>
+			<id>development</id>
+			<properties>
+				<env>development</env>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+				<env>test</env>
+			</properties>
+		</profile>
+		<profile>
+			<id>preproduction</id>
+			<properties>
+				<env>preproduction</env>
+			</properties>
+		</profile>
+		<profile>
+			<id>product</id>
+			<properties>
+				<env>product</env>
+			</properties>
+		</profile>
+	</profiles>
+
+</project>

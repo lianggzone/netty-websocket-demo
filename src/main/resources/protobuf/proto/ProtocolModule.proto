@@ -1,0 +1,24 @@
+option java_package = "com.lianggzone.netty.entity";
+option java_outer_classname = "ProtocolModule";
+//公共头
+message CommonProtocol {
+    message CommonHeader {
+		required uint32 CommandId = 1;  	
+		required uint32 SeqId = 2;
+		required uint32 Version = 3;
+		optional string FromUid = 4;		
+	}
+	required CommonHeader CommHeader = 1;
+	
+	message LiveCommonHeader {
+		required uint32 LiveType = 1;       
+		required uint32 LiveId = 2;
+		required uint32 DemandType = 3;
+		required uint32 DemandId = 4;
+		optional uint32 ToDemandId= 5;
+		optional uint32 ToDemandType= 6;
+	}
+	required LiveCommonHeader LiveHeader = 2;
+
+	optional bytes Data = 3;
+}
