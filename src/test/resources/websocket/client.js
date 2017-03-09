@@ -25,8 +25,10 @@ websocket.onopen = function () {
     websocket.send(commonProtocol.toArrayBuffer());
 }
 // 接收到消息的回调方法
-websocket.onmessage = function (event) {
-    console.log(event.data);
+websocket.onmessage = function (res) {
+	  console.log("接收到消息");
+    console.log(res.data);
+    console.log(CommonProtocol.decode(res.data));
 }
 // 连接关闭的回调方法
 websocket.onclose = function () {

@@ -33,6 +33,7 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<ProtocolModule
     @Override
 	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModule.CommonProtocol msg) throws Exception {
         System.out.println(msg);
+        ctx.write(msg);
 	}	
 
     /**

@@ -1,25 +1,29 @@
 package com.lianggzone.netty.server.initializer;
 
+import static io.netty.buffer.Unpooled.wrappedBuffer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.MessageToMessageDecoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.protobuf.MessageLite;
+import com.google.protobuf.MessageLiteOrBuilder;
 import com.lianggzone.netty.entity.ProtocolModule;
 import com.lianggzone.netty.server.handle.TcpServerHandler;
 
@@ -53,10 +57,22 @@ public class WebSocketChannelInitializer extends ChannelInitializer<NioSocketCha
                 buf.retain();
             }
         });
-        //pipeline.addLast(new ProtobufVarint32FrameDecoder());
+        pipeline.addLast(new MessageToMessageEncoder<MessageLiteOrBuilder>() {
+            @Override
+            protected void encode(ChannelHandlerContext ctx, MessageLiteOrBuilder msg, List<Object> out)
+            throws Exception {
+                ByteBuf result = null;
+                if (msg instanceof MessageLite) {
+                    result = wrappedBuffer(((MessageLite) msg).toByteArray());
+                }
+                if (msg instanceof MessageLite.Builder) {
+                    result = wrappedBuffer(((MessageLite.Builder) msg).build().toByteArray());
+                }
+                WebSocketFrame frame = new BinaryWebSocketFrame(result);
+                out.add(frame);
+            }
+        });
         pipeline.addLast(new ProtobufDecoder(ProtocolModule.CommonProtocol.getDefaultInstance()));
-        //pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
-        pipeline.addLast(new ProtobufEncoder());
         // 业务处理器
         pipeline.addLast(tcpServerHandler);
     }
