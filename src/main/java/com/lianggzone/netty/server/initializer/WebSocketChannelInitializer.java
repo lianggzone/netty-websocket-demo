@@ -52,7 +52,7 @@ public class WebSocketChannelInitializer extends ChannelInitializer<NioSocketCha
             @Override
             protected void decode(ChannelHandlerContext ctx, WebSocketFrame frame, List<Object> objs) throws Exception {
                 ByteBuf buf = ((BinaryWebSocketFrame) frame).content();
-                System.out.println(buf);
+                System.out.println("decode : " + buf);
                 objs.add(buf);
                 buf.retain();
             }
@@ -69,6 +69,7 @@ public class WebSocketChannelInitializer extends ChannelInitializer<NioSocketCha
                     result = wrappedBuffer(((MessageLite.Builder) msg).build().toByteArray());
                 }
                 WebSocketFrame frame = new BinaryWebSocketFrame(result);
+                System.out.println("encode : " + frame.content().array());
                 out.add(frame);
             }
         });
