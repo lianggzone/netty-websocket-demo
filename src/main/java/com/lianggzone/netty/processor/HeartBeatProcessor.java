@@ -20,6 +20,6 @@ public class HeartBeatProcessor implements IProcessor {
     @Override
     public void excute(ChannelHandlerContext ctx, CommonProtocol msg) throws Exception {
         System.out.println("返回心跳包给客户端");
-        
+        ctx.writeAndFlush(msg);
     }
 }

@@ -63,15 +63,6 @@ public class WebSocketChatServer{
     }
 
     /**
-     * 重启      
-     * @throws Exception
-     */
-    public void restart() throws Exception {
-        shutdown();
-        start();
-    }
-
-    /**
      * 关闭
      */
     public void shutdown() {

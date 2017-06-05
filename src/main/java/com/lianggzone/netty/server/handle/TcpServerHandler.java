@@ -1,10 +1,14 @@
 package com.lianggzone.netty.server.handle;
 
+import com.lianggzone.netty.entity.ProtocolModule;
+import com.lianggzone.netty.processor.IProcessor;
+import com.lianggzone.netty.processor.TaskManager;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import com.lianggzone.netty.entity.ProtocolModule;
 
 /**
  * <h3>概要:</h3><p>TcpServerHandler</p>
@@ -17,7 +21,9 @@ import com.lianggzone.netty.entity.ProtocolModule;
 @Component
 @ChannelHandler.Sharable
 public class TcpServerHandler extends SimpleChannelInboundHandler<ProtocolModule.CommonProtocol> {
-	
+
+    private static final Logger logger = LoggerFactory.getLogger(TcpServerHandler.class);
+
     /**
      * 客户端与服务端会话连接成功
      */
@@ -33,7 +39,17 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<ProtocolModule
     @Override
 	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModule.CommonProtocol msg) throws Exception {
         System.out.println(msg);
-        ctx.write(msg);
+        Integer commandId = msg.getCommHeader().getCommandId();
+        if (commandId != null) {
+            IProcessor task = TaskManager.getInstance().getTask(commandId);
+            if (task != null) {
+                task.excute(ctx, msg);
+            } else {
+                logger.error("not found command_id: " + msg.getCommHeader().getCommandId());
+            }
+        }else{
+            logger.error("not found command_id");
+        }
 	}	
 
     /**
